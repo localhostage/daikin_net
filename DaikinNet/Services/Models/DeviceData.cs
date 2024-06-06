@@ -50,8 +50,6 @@ public class DeviceData
         AuxiliaryHeat = 4
     }
 
-    //"equipmentStatus": the running state of the system, 1=cooling, 2=overcool dehumidifying, 3=heating, 4=fan, 5=idle, 
-
     public enum ThermostatStatus
     {
         UNKNOWN_0 = 0,

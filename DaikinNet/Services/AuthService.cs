@@ -45,9 +45,8 @@ public class AuthService
         catch (HttpRequestException e)
         {
             LogError("Error getting token:", e);
+            throw new Exception("Error getting token", e);
         }
-        
-        return null;
     }
 
     private void LogError(string message, Exception e)

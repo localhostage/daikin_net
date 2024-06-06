@@ -20,18 +20,16 @@ public class DeviceService
         _log = log;
         
         // configure httpClient
-        // - set accept json header
         _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     }
 
     public async Task<DeviceListResponse?> GetDeviceList()
     {
-        _log.Debug("Getting device list...");
-
         try
         {
             await CheckAuth();
             
+            _log.Debug("Getting device list...");
             
             var response = await _httpClient.GetAsync("https://api.daikinskyport.com/devices");
             response.EnsureSuccessStatusCode();
@@ -51,11 +49,11 @@ public class DeviceService
     
     public async Task<DeviceData?> GetDeviceData(string deviceId)
     {
-        _log.Debug("Getting device data...");
-
         try
         {
             await CheckAuth();
+
+            _log.Debug("Getting device data...");
             
             var response = await _httpClient.GetAsync($"https://api.daikinskyport.com/deviceData/{deviceId}");
             response.EnsureSuccessStatusCode();
@@ -63,8 +61,10 @@ public class DeviceService
             var responseBodyJson = await response.Content.ReadAsStringAsync();
 
             var jObj = JObject.Parse(responseBodyJson);
-            var sortedJsonObject = SortProperties(jObj);
-            var sortedJson = sortedJsonObject.ToString();
+            
+            // useful for inspecting the response whic has hundreds of unordered properties
+            // var sortedJsonObject = SortProperties(jObj);
+            // var sortedJson = sortedJsonObject.ToString();
             
             var deviceDataResponse = JsonConvert.DeserializeObject<DeviceData>(responseBodyJson);
             return deviceDataResponse;
@@ -77,30 +77,6 @@ public class DeviceService
         return null;
     }
     
-    static JObject SortProperties(JObject original)
-    {
-        var sortedProperties = new SortedDictionary<string, JToken>();
-        foreach (var property in original.Properties())
-        {
-            sortedProperties.Add(property.Name, property.Value);
-        }
-
-        JObject sortedObject = new JObject();
-        foreach (var property in sortedProperties)
-        {
-            if (property.Value is JObject nestedObject)
-            {
-                sortedObject.Add(property.Key, SortProperties(nestedObject));
-            }
-            else
-            {
-                sortedObject.Add(property.Key, property.Value);
-            }
-        }
-
-        return sortedObject;
-    }
-
     private async Task CheckAuth()
     {
         // get token
@@ -111,9 +87,6 @@ public class DeviceService
             // set token expiration date
             if (_tokenResponse != null)
             {
-                // token expires way before their expiration date (wtf)
-                //_tokenExpirationDate = DateTime.Now.AddSeconds(_tokenResponse.AccessTokenExpiresIn - 60);
-                
                 // set token expiration to 5 minutes because their actual expiration doesn't work
                 _tokenExpirationDate = DateTime.Now.AddSeconds(300);
             }
@@ -163,4 +136,29 @@ public class DeviceService
             
         _log.Debug($"Set temps response: {responseBody}");
     }
+    
+    static JObject SortProperties(JObject original)
+    {
+        var sortedProperties = new SortedDictionary<string, JToken>();
+        foreach (var property in original.Properties())
+        {
+            sortedProperties.Add(property.Name, property.Value);
+        }
+
+        JObject sortedObject = new JObject();
+        foreach (var property in sortedProperties)
+        {
+            if (property.Value is JObject nestedObject)
+            {
+                sortedObject.Add(property.Key, SortProperties(nestedObject));
+            }
+            else
+            {
+                sortedObject.Add(property.Key, property.Value);
+            }
+        }
+
+        return sortedObject;
+    }
+
 }

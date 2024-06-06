@@ -17,7 +17,10 @@ class Program
         // read influx environment variables
         var influxUrl = Environment.GetEnvironmentVariable("INFLUX_URL");
         var influxAuth = Environment.GetEnvironmentVariable("INFLUX_AUTH");
-
+        
+        // read poll interval from environment variables as an integer
+        var pollInterval = int.Parse(Environment.GetEnvironmentVariable("POLL_INTERVAL") ?? "5000");
+        
         // assert username and password are not-null and not-empty
         if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
         {
@@ -54,7 +57,7 @@ class Program
                 if (deviceData != null) await influxService.SubmitDeviceData(deviceData);
             }
     
-            Thread.Sleep(5000);
+            Thread.Sleep(pollInterval);
         }
     }
 }
