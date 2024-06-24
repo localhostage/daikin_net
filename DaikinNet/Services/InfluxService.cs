@@ -37,9 +37,9 @@ public class InfluxService
                           + $"\nmode,location=home,node=thermostat value={(int) deviceData.Mode}"
                           + $"\nfan_circulate,location=home,node=thermostat value={Convert.ToInt32(deviceData.FanCirculate)}"
                           + $"\nfan_circulate_speed,location=home,node=thermostat value={(int) deviceData.FanCirculateSpeed}"
-                          + $"\nfan_circulate_speed,location=home,node=thermostat value={(int) deviceData.CTCompressorCurrent}"
-                          + $"\nfan_circulate_speed,location=home,node=thermostat value={(int) deviceData.CTControlAlgorithmCoolDemand}"
-                          + $"\nfan_circulate_speed,location=home,node=thermostat value={(int) deviceData.CTControlAlgorithmRawDemand}";
+                          + $"\nct_compressor_current,location=home,node=thermostat value={deviceData.CTCompressorCurrent}"
+                          + $"\nct_control_algorithm_cool_demand,location=home,node=thermostat value={deviceData.CTControlAlgorithmCoolDemand}"
+                          + $"\nct_control_algorithm_raw_demand,location=home,node=thermostat value={deviceData.CTControlAlgorithmRawDemand}";
             
             var content = new StringContent(payload, Encoding.UTF8);
 
