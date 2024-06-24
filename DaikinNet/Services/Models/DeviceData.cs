@@ -30,6 +30,15 @@ public class DeviceData
     public bool FanCirculate { get; set; }
     
     public FanSpeed FanCirculateSpeed { get; set; }
+    
+    [JsonProperty(PropertyName = "ctControlAlgorithmCoolDemand")]
+    public int CTControlAlgorithmCoolDemand { get; set; }
+    
+    [JsonProperty(PropertyName = "ctControlAlgorithmRawDemand")]
+    public int CTControlAlgorithmRawDemand { get; set; }
+    
+    [JsonProperty(PropertyName = "ctCompressorCurrent")]
+    public int CTCompressorCurrent { get; set; }
 
     public override string ToString()
     {
