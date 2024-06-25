@@ -12,6 +12,8 @@ public class DeviceData
     public float HumIndoor { get; set; }
     public float HumOutdoor { get; set; }
     public int AqOutdoorValue { get; set; }
+    public int AqOutdoorOzone { get; set; }
+    
     public AqLevel AqOutdoorLevel { get; set; }
     public AqLevel AqIndoorLevel { get; set; }
     public ThermostatStatus EquipmentStatus { get; set; }
@@ -34,11 +36,32 @@ public class DeviceData
     [JsonProperty(PropertyName = "ctControlAlgorithmCoolDemand")]
     public int CTControlAlgorithmCoolDemand { get; set; }
     
+    [JsonProperty(PropertyName = "ctControlAlgorithmHeatDemand")]
+    public int CTControlAlgorithmHeatDemand { get; set; }
+    
     [JsonProperty(PropertyName = "ctControlAlgorithmRawDemand")]
     public int CTControlAlgorithmRawDemand { get; set; }
     
     [JsonProperty(PropertyName = "ctCompressorCurrent")]
     public int CTCompressorCurrent { get; set; }
+    
+    [JsonProperty(PropertyName = "ctIFCCurrentFanActualStatus")]
+    public int CTIFCCurrentFanActualStatus { get; set; }
+    
+    [JsonProperty(PropertyName = "ctIFCFanRequestedDemandPercent")]
+    public int CTIFCFanRequestedDemandPercent { get; set; }
+    
+    [JsonProperty(PropertyName = "ctIFCIndoorBlowerAirflow")]
+    public int CTIFCIndoorBlowerAirflow { get; set; }
+    
+    [JsonProperty(PropertyName = "ctIndoorPower")]
+    public int CTIndoorPower { get; set; }
+    
+    [JsonProperty(PropertyName = "ctODFanMotorCurrent")]
+    public int CTODFanMotorCurrent { get; set; }
+    
+    [JsonProperty(PropertyName = "ctOutdoorFanRPM")]
+    public int CTOutdoorFanRPM { get; set; }
 
     public override string ToString()
     {
