@@ -42,7 +42,8 @@ public class InfluxService
                           + $"\nct_control_algorithm_cool_demand,location=home,node=thermostat value={deviceData.CTControlAlgorithmCoolDemand}"
                           + $"\nct_control_algorithm_raw_demand,location=home,node=thermostat value={deviceData.CTControlAlgorithmRawDemand}"
                           + $"\nct_control_algorithm_heat_demand,location=home,node=thermostat value={deviceData.CTControlAlgorithmHeatDemand}"
-                          + $"\nct_outdoor_fan_rpm,location=home,node=thermostat value={deviceData.CTOutdoorFanRPM}";
+                          + $"\nct_outdoor_fan_rpm,location=home,node=thermostat value={deviceData.CTOutdoorFanRPM}"
+                          + $"\nct_indoor_blower_airflow,location=home,node=thermostat value={deviceData.CTIFCIndoorBlowerAirflow}";
             
             var content = new StringContent(payload, Encoding.UTF8);
 
