@@ -60,14 +60,35 @@ public class DeviceService
 
             var responseBodyJson = await response.Content.ReadAsStringAsync();
 
-            var jObj = JObject.Parse(responseBodyJson);
-            
-            // useful for inspecting the response whic has hundreds of unordered properties
-            // var sortedJsonObject = SortProperties(jObj);
-            // var sortedJson = sortedJsonObject.ToString();
-            
             var deviceDataResponse = JsonConvert.DeserializeObject<DeviceData>(responseBodyJson);
             return deviceDataResponse;
+        }
+        catch (HttpRequestException e)
+        {
+            LogError("Error getting device list:", e);
+        }
+        
+        return null;
+    }
+
+    public async Task<JObject?> GetRawDeviceData(string deviceId)
+    {
+        try
+        {
+            await CheckAuth();
+
+            _log.Debug("Getting device data...");
+            
+            var response = await _httpClient.GetAsync($"https://api.daikinskyport.com/deviceData/{deviceId}");
+            response.EnsureSuccessStatusCode();
+
+            var responseBodyJson = await response.Content.ReadAsStringAsync();
+
+            var jObj = JObject.Parse(responseBodyJson);
+            
+            var sortedJsonObject = SortProperties(jObj);
+            // var sortedJson = sortedJsonObject.ToString();
+            return sortedJsonObject;
         }
         catch (HttpRequestException e)
         {
