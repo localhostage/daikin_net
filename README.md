@@ -6,13 +6,11 @@ C# .Net Daikin One Plus Logger
 - - Configurable via environment variables
 
 ## Configuration
-- `DAIKIN_IP` - IP address of Daikin One Plus HVAC system
-- `DAIKIN_PORT` - Port of Daikin One Plus HVAC system
-- `INFLUXDB_URL` - URL of InfluxDB
-- `INFLUXDB_DATABASE` - InfluxDB database name
-- `INFLUXDB_USERNAME` - InfluxDB username
-- `INFLUXDB_PASSWORD` - InfluxDB password
-- `POLL_INTERVAL` - Interval in seconds to poll Daikin One Plus HVAC system
+- `DAIKIN_USERNAME` - Daikin One login username
+- `DAIKIN_PASSWORD` - Daikin One login password
+- `INFLUX_AUTH` - Influx DB v1 auth token
+- `INFLUX_URL` - InfluxDB db url
+- `POLL_INTERVAL` - Interval in seconds to poll Daikin One API. [defualts to 5 seconds]
 
 ## Docker
 ```
