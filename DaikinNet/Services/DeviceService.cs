@@ -71,7 +71,7 @@ public class DeviceService
         return null;
     }
 
-    public async Task<JObject?> GetRawDeviceData(string deviceId)
+    public async Task<JObject?> GetRawDeviceData(string deviceId, bool toLowerKeys = false)
     {
         try
         {
@@ -86,7 +86,7 @@ public class DeviceService
 
             var jObj = JObject.Parse(responseBodyJson);
             
-            var sortedJsonObject = SortProperties(jObj);
+            var sortedJsonObject = SortProperties(jObj, toLowerKeys);
             // var sortedJson = sortedJsonObject.ToString();
             return sortedJsonObject;
         }
@@ -158,24 +158,33 @@ public class DeviceService
         _log.Debug($"Set temps response: {responseBody}");
     }
     
-    static JObject SortProperties(JObject original)
+    static JObject SortProperties(JObject original, bool toLowerKeys)
     {
         var sortedProperties = new SortedDictionary<string, JToken>();
         foreach (var property in original.Properties())
         {
-            sortedProperties.Add(property.Name, property.Value);
+            if (toLowerKeys)
+            {
+                sortedProperties.Add(property.Name.ToLower(), property.Value);
+            }
+            else
+            {
+                sortedProperties.Add(property.Name, property.Value);
+            }
         }
 
         JObject sortedObject = new JObject();
         foreach (var property in sortedProperties)
         {
+            var key = toLowerKeys ? property.Key.ToLower() : property.Key;
+            
             if (property.Value is JObject nestedObject)
             {
-                sortedObject.Add(property.Key, SortProperties(nestedObject));
+                sortedObject.Add(key, SortProperties(nestedObject, toLowerKeys));
             }
             else
             {
-                sortedObject.Add(property.Key, property.Value);
+                sortedObject.Add(key, property.Value);
             }
         }
 

@@ -1,4 +1,5 @@
 using DaikinNet;
+using Newtonsoft.Json;
 
 class Program
 {
@@ -101,6 +102,14 @@ class Program
             Console.WriteLine("Please set INFLUX_URL and INFLUX_AUTH environment variables.");
             return;
         }
+        
+        // load config
+        var config = LoadConfig();
+        if (config == null)
+        {
+            Console.WriteLine("Error loading `config.json`.");
+            return;
+        }
 
         var authHttpClient = new HttpClient();
         var authService = new AuthService(authHttpClient, username, password, new ConsoleLogger());
@@ -116,15 +125,60 @@ class Program
 
         while (true)
         {
-            foreach (var device in deviceList.Devices)
-            {
-                var deviceData = await deviceService.GetDeviceData(device.Id);
-                Console.WriteLine($" - Device: {device.Name}, Data: \n{deviceData?.ToString()}");
-        
-                if (deviceData != null) await influxService.SubmitDeviceData(deviceData);
-            }
-    
+            if (deviceList?.Devices != null)
+                foreach (var device in deviceList?.Devices)
+                {
+                    var reportMap = new Dictionary<string, string>();
+
+                    var rawDeviceData = await deviceService.GetRawDeviceData(device.Id, true);
+                    if (rawDeviceData != null)
+                    {
+                        foreach (var configReportField in config.ReportFields)
+                        {
+                            if (rawDeviceData.ContainsKey(configReportField.SourceField.ToLower()))
+                            {
+                                var reportField = configReportField.ReportField;
+                                if (string.IsNullOrWhiteSpace(reportField))
+                                {
+                                    if (config.ReportWithSnakeCase)
+                                    {
+                                        reportField = StringUtils.CamelCaseToSnakeCase(configReportField.SourceField);
+                                    }
+                                    else
+                                    {
+                                        reportField = configReportField.SourceField;
+                                    }
+                                }
+
+                                var fieldValue = rawDeviceData[configReportField.SourceField.ToLower()]?.ToString();
+                                if (!string.IsNullOrWhiteSpace(fieldValue))
+                                {
+                                    reportMap.Add(reportField, fieldValue);
+                                }
+                            }
+                        }
+                    }
+
+                    if (reportMap.Count > 0)
+                    {
+                        await influxService.SubmitMap(reportMap);
+                    }
+                }
+
             Thread.Sleep(pollInterval);
         }
+    }
+
+    private Config? LoadConfig()
+    {
+        if (File.Exists("config.json"))
+        {
+            var configJson = File.ReadAllText("config.json");
+            var config = JsonConvert.DeserializeObject<Config>(configJson);
+            return config;
+        }
+
+        Console.WriteLine("Config.json not found!");
+        return null;
     }
 }

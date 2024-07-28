@@ -18,6 +18,36 @@ public class InfluxService
         _influxUrl = influxUrl;
         _influxAuth = influxAuth;
     }
+    
+    public async Task SubmitMap(Dictionary<string, string> reportMap)
+    {
+        _log.Debug("Submitting map...");
+
+        try
+        {
+            var payload = "";
+            foreach (var reportMapEntry in reportMap)
+            {
+                payload += $"{reportMapEntry.Key},location=home,node=thermostat value={reportMapEntry.Value}\n";
+            }
+            payload = payload.Trim('\n');
+            
+            var content = new StringContent(payload, Encoding.UTF8);
+
+            // wire basic auth
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Basic", _influxAuth);
+
+            var response = await _httpClient.PostAsync(_influxUrl, content);
+            response.EnsureSuccessStatusCode();
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+        }
+        catch (HttpRequestException e)
+        {
+            LogError("Error submitting device data:", e);
+        }
+    }
 
     public async Task SubmitDeviceData(DeviceData deviceData)
     {
