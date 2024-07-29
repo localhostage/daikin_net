@@ -140,14 +140,7 @@ class Program
                                 var reportField = configReportField.ReportField;
                                 if (string.IsNullOrWhiteSpace(reportField))
                                 {
-                                    if (config.ReportWithSnakeCase)
-                                    {
-                                        reportField = StringUtils.CamelCaseToSnakeCase(configReportField.SourceField);
-                                    }
-                                    else
-                                    {
-                                        reportField = configReportField.SourceField;
-                                    }
+                                    reportField = config.ReportWithSnakeCase ? StringUtils.CamelCaseToSnakeCase(configReportField.SourceField) : configReportField.SourceField;
                                 }
 
                                 var fieldValue = rawDeviceData[configReportField.SourceField.ToLower()]?.ToString();
